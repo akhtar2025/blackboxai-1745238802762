@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistik | E-Learning Safety Riding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100" onload="checkAuth(); loadAnalytics();">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Statistik Pembelajaran</h1>
+                <div class="flex space-x-4">
+                    <button onclick="exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                        <i class="fas fa-file-excel mr-2"></i>Export Excel
+                    </button>
+                    <a href="dashboard.html" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Statistics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Department Access -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Akses Bagian Terbanyak</h2>
+                    <div class="h-64">
+                        <canvas id="departmentAccessChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Best Performance -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Performance Bagian Terbaik</h2>
+                    <div class="h-64">
+                        <canvas id="departmentPerformanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Average Quiz Score -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Rata-rata Score Quiz</h2>
+                    <div class="h-64">
+                        <canvas id="quizScoreChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Module Completion -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Statistik Penyelesaian Modul</h2>
+                    <div class="h-64">
+                        <canvas id="moduleCompletionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Statistics Table -->
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold">Detail Statistik per Bagian</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Bagian
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Jumlah Peserta
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Rata-rata Nilai
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Penyelesaian Modul
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="statisticsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function loadAnalytics() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const analytics = calculateAnalytics(users);
+            
+            createDepartmentAccessChart(analytics.departmentAccess);
+            createDepartmentPerformanceChart(analytics.departmentPerformance);
+            createQuizScoreChart(analytics.moduleScores);
+            createModuleCompletionChart(analytics.moduleCompletion);
+            populateStatisticsTable(analytics);
+        }
+
+        function calculateAnalytics(users) {
+            const departments = {};
+            const moduleScores = {
+                basic: 0,
+                braking: 0,
+                hazard: 0,
+                microsleep: 0,
+                blindspot: 0
+            };
+            const moduleCompletion = {
+                basic: 0,
+                braking: 0,
+                hazard: 0,
+                microsleep: 0,
+                blindspot: 0
+            };
+            
+            users.forEach(user => {
+                // Count department access
+                if (!departments[user.bagian]) {
+                    departments[user.bagian] = {
+                        count: 0,
+                        totalScore: 0,
+                        completedModules: 0
+                    };
+                }
+                departments[user.bagian].count++;
+
+                // Calculate scores and completion
+                Object.entries(user.progress.modules).forEach(([module, data]) => {
+                    if (data.completed) {
+                        moduleScores[module] += data.score;
+                        moduleCompletion[module]++;
+                        departments[user.bagian].totalScore += data.score;
+                        departments[user.bagian].completedModules++;
+                    }
+                });
+            });
+
+            // Calculate averages
+            Object.keys(moduleScores).forEach(module => {
+                moduleScores[module] = moduleScores[module] / (moduleCompletion[module] || 1);
+            });
+
+            // Calculate department performance
+            const departmentPerformance = {};
+            Object.entries(departments).forEach(([dept, data]) => {
+                departmentPerformance[dept] = data.totalScore / (data.completedModules || 1);
+            });
+
+            return {
+                departmentAccess: departments,
+                departmentPerformance,
+                moduleScores,
+                moduleCompletion
+            };
+        }
+
+        function createDepartmentAccessChart(data) {
+            const ctx = document.getElementById('departmentAccessChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        label: 'Jumlah Akses',
+                        data: Object.values(data).map(d => d.count),
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDepartmentPerformanceChart(data) {
+            const ctx = document.getElementById('departmentPerformanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        label: 'Rata-rata Nilai',
+                        data: Object.values(data),
+                        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createQuizScoreChart(data) {
+            const ctx = document.getElementById('quizScoreChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(data).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+                    datasets: [{
+                        label: 'Rata-rata Nilai Quiz',
+                        data: Object.values(data),
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: 'rgb(99, 102, 241)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgb(99, 102, 241)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createModuleCompletionChart(data) {
+            const ctx = document.getElementById('moduleCompletionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.5)',
+                            'rgba(16, 185, 129, 0.5)',
+                            'rgba(245, 158, 11, 0.5)',
+                            'rgba(99, 102, 241, 0.5)',
+                            'rgba(236, 72, 153, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(99, 102, 241)',
+                            'rgb(236, 72, 153)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function populateStatisticsTable(analytics) {
+            const tableBody = document.getElementById('statisticsTableBody');
+            tableBody.innerHTML = '';
+
+            Object.entries(analytics.departmentAccess).forEach(([dept, data]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ${dept}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${data.count}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${(analytics.departmentPerformance[dept] || 0).toFixed(2)}%
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${((data.completedModules / (data.count * 5)) * 100).toFixed(2)}%
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function exportToExcel() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add headers
+            csvContent += "NPK,Nama,Bagian,Basic Score,Braking Score,Hazard Score,Microsleep Score,Blindspot Score,Commitment\n";
+            
+            // Add data rows
+            users.forEach(user => {
+                const row = [
+                    user.npk,
+                    user.nama,
+                    user.bagian,
+                    user.progress.modules.basic.score || 0,
+                    user.progress.modules.braking.score || 0,
+                    user.progress.modules.hazard.score || 0,
+                    user.progress.modules.microsleep.score || 0,
+                    user.progress.modules.blindspot.score || 0,
+                    `"${user.progress.commitment || ''}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+            
+            // Create download link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "safety_riding_statistics.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+
+    <script src="auth.js"></script>
+</body>
+</html>
