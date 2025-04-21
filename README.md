@@ -1,72 +1,171 @@
+# E-Learning Safety Riding Application
 
-Built by https://www.blackbox.ai
+Aplikasi pembelajaran online untuk keselamatan berkendara sepeda motor dengan fitur tracking progress dan statistik pengguna.
 
----
+## Struktur Aplikasi
 
-```markdown
-# E-Learning Safety Riding
+```
+├── index.html          # Halaman login
+├── dashboard.html      # Dashboard utama
+├── auth.js            # Manajemen autentikasi
+├── basic.html         # Materi dasar safety riding
+├── braking.html       # Materi teknik pengereman
+├── hazard.html        # Materi antisipasi bahaya
+├── microsleep.html    # Materi micro sleep
+├── blindspot.html     # Materi blind spot
+└── analytics.html     # Halaman statistik
+```
 
-## Project Overview
-E-Learning Safety Riding is an educational web application designed to teach the principles of safe riding practices. The platform covers various modules including basic safety riding, braking techniques, hazard anticipation, microsleep prevention, and understanding blind spots. Users can log in with their details, learn modules, take quizzes, and check their progress through a user-friendly dashboard.
+## Fitur Aplikasi
 
-## Installation
-To set up the project locally, follow these instructions:
+1. **Sistem Login**
+   - Input NPK
+   - Input Nama
+   - Pilihan Bagian/Departemen
 
-1. **Clone the Repository**
+2. **Materi Pembelajaran**
+   - Dasar Safety Riding
+   - Teknik Pengereman
+   - Antisipasi Bahaya
+   - Micro Sleep
+   - Blind Spot
+
+3. **Fitur Tracking**
+   - Progress pembelajaran per modul
+   - Nilai quiz
+   - Statistik departemen
+   - Komitmen keselamatan
+
+4. **Statistik & Analisis**
+   - Akses bagian terbanyak
+   - Performance bagian terbaik
+   - Rata-rata score quiz
+   - Statistik penyelesaian modul
+
+## Cara Deploy ke Netlify
+
+1. **Persiapan Repository**
    ```bash
-   git clone <repository-url>
+   # Buat repository Git baru
+   git init
+   
+   # Tambahkan semua file
+   git add .
+   
+   # Commit perubahan
+   git commit -m "Initial commit"
    ```
-2. **Navigate into the Project Directory**
-   ```bash
-   cd e-learning-safety-riding
-   ```
-3. **Open the `index.html` file in your web browser**
 
-The application does not have any backend setup and uses LocalStorage for data management, making it easy to run locally without any additional configuration.
+2. **Deploy ke Netlify**
+   
+   a. **Manual Deploy:**
+   - Kunjungi [Netlify](https://app.netlify.com/)
+   - Login/Register akun
+   - Klik "Add new site" > "Deploy manually"
+   - Drag & drop folder project ke area upload
+   - Tunggu proses deploy selesai
 
-## Usage
-After loading the application in your browser, you can:
-1. Log in by entering your NPK (employee identifier), name, and department.
-2. Access the dashboard where you can navigate to different learning modules.
-3. Complete quizzes to assess your understanding of the material.
-4. Check your learning progress and statistics.
+   b. **Deploy via Git:**
+   - Buat repository di GitHub/GitLab/Bitbucket
+   - Push code ke repository:
+     ```bash
+     git remote add origin <repository-url>
+     git push -u origin main
+     ```
+   - Di Netlify, klik "Add new site" > "Import an existing project"
+   - Pilih repository
+   - Klik "Deploy site"
 
-## Features
-- User authentication via LocalStorage.
-- Various modules focusing on safety riding practices.
-- Responsive design utilizing Tailwind CSS for styling.
-- Dynamic content loading, including quizzes and progress tracking.
-- Error handling and user guidance through modals.
-- Analytics dashboard for monitoring user engagement and performance.
+3. **Konfigurasi Site**
+   
+   a. **Domain Settings:**
+   - Klik site yang baru dibuat
+   - Ke tab "Domain settings"
+   - Gunakan domain default Netlify atau tambahkan custom domain
 
-## Dependencies
-This project utilizes the following libraries:
-- [Tailwind CSS](https://tailwindcss.com/) for styling.
-- [Chart.js](https://www.chartjs.org/) for analytics visualizations.
-- [Font Awesome](https://fontawesome.com/) for icons.
+   b. **Environment Variables:**
+   - Ke tab "Site settings" > "Build & deploy" > "Environment"
+   - Tambahkan variable yang diperlukan (jika ada)
 
-Additional JavaScript files include:
-- `auth.js`: Manages user authentication, session handling, and analytics.
-- Various HTML files for different modules and user interfaces.
+4. **Pengujian**
+   - Buka URL yang diberikan Netlify
+   - Test semua fitur:
+     - Login
+     - Akses materi
+     - Quiz
+     - Statistik
+     - Komitmen & Logout
 
-## Project Structure
-The project's directory structure is as follows:
-```
-e-learning-safety-riding/
-├── index.html                 # Main entry point for the application
-├── dashboard.html             # User dashboard
-├── analytics.html             # Analytics view for user performance
-├── basic.html                 # Basic safety riding module
-├── braking.html               # Braking techniques module
-├── hazard.html                # Hazard anticipation module
-├── microsleep.html            # Microsleep awareness module
-├── blindspot.html             # Blind spot awareness module
-└── auth.js                    # JavaScript for authentication and frontend logic
-```
+## Penyimpanan Data
 
-## Contributing
-Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request.
+Aplikasi ini menggunakan localStorage untuk menyimpan data pengguna. Data yang tersimpan meliputi:
 
-## License
-This project is open-source and available under the MIT License.
-```
+1. **Data Pengguna**
+   - NPK
+   - Nama
+   - Bagian/Departemen
+   - Progress pembelajaran
+   - Nilai quiz
+   - Komitmen keselamatan
+
+2. **Data Statistik**
+   - Akses per departemen
+   - Nilai rata-rata
+   - Status penyelesaian modul
+
+## Pemeliharaan
+
+1. **Backup Data**
+   - Export data statistik secara berkala
+   - Simpan backup di lokasi yang aman
+
+2. **Update Konten**
+   - Edit file HTML untuk memperbarui materi
+   - Test setelah setiap perubahan
+   - Deploy ulang ke Netlify
+
+3. **Monitoring**
+   - Pantau statistik penggunaan di dashboard Netlify
+   - Periksa error logs jika ada masalah
+
+## Troubleshooting
+
+1. **Masalah Login**
+   - Periksa input NPK dan Nama
+   - Pastikan pemilihan Bagian valid
+   - Clear localStorage jika diperlukan
+
+2. **Data Tidak Tersimpan**
+   - Pastikan localStorage tersedia
+   - Periksa kuota storage browser
+   - Validasi format data
+
+3. **Masalah Deploy**
+   - Periksa log deploy di Netlify
+   - Pastikan semua file termasuk dalam deploy
+   - Verifikasi konfigurasi build
+
+## Pengembangan Lanjutan
+
+1. **Peningkatan Fitur**
+   - Tambah materi baru
+   - Tingkatkan interaktivitas quiz
+   - Tambah fitur reporting
+
+2. **Optimasi**
+   - Kompresi gambar
+   - Minifikasi CSS/JS
+   - Implementasi caching
+
+3. **Keamanan**
+   - Enkripsi data sensitif
+   - Validasi input
+   - Rate limiting
+
+## Support
+
+Untuk bantuan teknis atau pertanyaan, hubungi tim IT support atau buat issue di repository project.
+
+## Lisensi
+
+Hak cipta dilindungi. Penggunaan aplikasi terbatas untuk keperluan internal perusahaan.
