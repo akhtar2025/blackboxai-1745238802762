@@ -118,31 +118,45 @@ function checkAuth() {
 }
 
 // Function to handle logout
-function logout() {
+function logout(isCommitmentSubmitted = false) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser) {
         // Check if all modules are completed
         const progress = currentUser.progress.modules;
         const allCompleted = Object.values(progress).every(module => module.completed);
         
-        if (!allCompleted) {
-            showErrorModal('Anda harus menyelesaikan semua modul sebelum keluar');
-            return false;
+        if (!isCommitmentSubmitted) {
+            if (!allCompleted) {
+                showErrorModal('Anda harus menyelesaikan semua modul sebelum keluar');
+                return false;
+            }
+            
+            if (!currentUser.progress.commitment) {
+                showErrorModal('Anda harus mengisi komitmen keselamatan berkendara sebelum keluar');
+                return false;
+            }
         }
-        
-        if (!currentUser.progress.commitment) {
-            showErrorModal('Anda harus mengisi komitmen keselamatan berkendara sebelum keluar');
-            return false;
-        }
+
+        // Clear user session and redirect to login
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+        return true;
     }
     
-    localStorage.removeItem('currentUser');
+    // If no current user, redirect to login immediately
     window.location.href = 'index.html';
     return true;
+}
+
+// Function to force logout (for use in quiz completions and other forced exits)
+function forceLogout() {
+    localStorage.removeItem('currentUser');
+    window.location.replace('index.html');
 }
 
 // Export functions for use in other files
 window.checkAuth = checkAuth;
 window.logout = logout;
+window.forceLogout = forceLogout;
 window.showErrorModal = showErrorModal;
 window.closeErrorModal = closeErrorModal;
