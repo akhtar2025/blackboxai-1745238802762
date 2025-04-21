@@ -233,9 +233,12 @@
                 localStorage.setItem('users', JSON.stringify(users));
             }
 
-            // Show thank you message and logout
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Show thank you message and logout with commitment flag
             alert('Terima kasih telah mengikuti edukasi dan berkomitmen untuk tetap menjaga keselamatan dalam berkendara.');
-            logout();
+            logout(true);
         }
     </script>
 
