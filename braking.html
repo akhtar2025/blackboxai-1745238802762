@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teknik Pengereman | E-Learning Safety Riding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100" onload="checkAuth();">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Teknik Pengereman</h1>
+                <a href="dashboard.html" class="text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Progress Bar -->
+            <div class="bg-white shadow rounded-lg p-4 mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">Progress Materi</span>
+                    <span id="progressText" class="text-sm font-medium text-blue-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <!-- Navigation Tabs -->
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button onclick="showSection('cara')" class="tab-btn w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                            Cara Pengereman
+                        </button>
+                        <button onclick="showSection('langkah')" class="tab-btn w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                            Langkah Pengereman
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Cara Pengereman Section -->
+                <div id="cara" class="content-section p-6">
+                    <h2 class="text-2xl font-bold mb-4">Cara-Cara Pengereman</h2>
+                    <div class="prose max-w-none">
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">1. Pengereman Normal</h3>
+                                <p>Pengereman yang dilakukan secara bertahap dengan menekan kedua rem (depan dan belakang) secara bersamaan. Teknik ini cocok untuk situasi normal dan kecepatan sedang.</p>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">2. Pengereman Darurat</h3>
+                                <p>Pengereman yang dilakukan secara mendadak dalam situasi darurat. Perlu kehati-hatian ekstra untuk menghindari tergelincir.</p>
+                                <ul class="list-disc pl-6 mt-2">
+                                    <li>Tekan rem depan dan belakang secara bersamaan</li>
+                                    <li>Jaga posisi badan tetap tegak</li>
+                                    <li>Perhatikan kondisi jalan</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">3. Engine Brake</h3>
+                                <p>Pengereman dengan memanfaatkan penurunan gigi transmisi. Cocok untuk mengurangi kecepatan secara bertahap dan menghemat kampas rem.</p>
+                            </div>
+                        </div>
+                        <img src="https://images.pexels.com/photos/2519374/pexels-photo-2519374.jpeg" alt="Braking Technique" class="w-full rounded-lg mt-4">
+                    </div>
+                </div>
+
+                <!-- Langkah Pengereman Section -->
+                <div id="langkah" class="content-section p-6">
+                    <h2 class="text-2xl font-bold mb-4">Langkah Pengereman yang Baik</h2>
+                    <div class="prose max-w-none">
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">Persiapan Sebelum Mengerem</h3>
+                                <ul class="list-disc pl-6">
+                                    <li>Pastikan posisi tangan siap di tuas rem</li>
+                                    <li>Perhatikan kondisi jalan dan lingkungan</li>
+                                    <li>Jaga jarak aman dengan kendaraan di depan</li>
+                                    <li>Kurangi kecepatan secara bertahap</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">Teknik Pengereman yang Benar</h3>
+                                <ol class="list-decimal pl-6">
+                                    <li>Lepaskan gas secara perlahan</li>
+                                    <li>Tekan rem belakang terlebih dahulu</li>
+                                    <li>Diikuti dengan penekanan rem depan</li>
+                                    <li>Jaga keseimbangan badan</li>
+                                    <li>Perhatikan kendaraan di belakang</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">Hal yang Perlu Dihindari</h3>
+                                <ul class="list-disc pl-6">
+                                    <li>Mengerem mendadak tanpa alasan</li>
+                                    <li>Hanya menggunakan rem depan</li>
+                                    <li>Mengerem saat menikung</li>
+                                    <li>Mengabaikan kondisi jalan</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <img src="https://images.pexels.com/photos/2611690/pexels-photo-2611690.jpeg" alt="Proper Braking Steps" class="w-full rounded-lg mt-4">
+                    </div>
+                </div>
+
+                <!-- Quiz Section -->
+                <div id="quiz" class="hidden p-6 bg-gray-50">
+                    <h2 class="text-2xl font-bold mb-4">Kuis Pemahaman</h2>
+                    <form id="quizForm" class="space-y-6">
+                        <!-- Question 1 -->
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <p class="font-medium mb-4">1. Apa yang dimaksud dengan engine brake?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="q1" value="a" class="mr-2">
+                                    <span>Mengerem mendadak dengan rem depan</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q1" value="b" class="mr-2">
+                                    <span>Pengereman dengan memanfaatkan penurunan gigi transmisi</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q1" value="c" class="mr-2">
+                                    <span>Mematikan mesin saat berkendara</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <p class="font-medium mb-4">2. Manakah urutan pengereman yang benar?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="q2" value="a" class="mr-2">
+                                    <span>Rem depan, lalu rem belakang</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q2" value="b" class="mr-2">
+                                    <span>Rem belakang, lalu rem depan</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q2" value="c" class="mr-2">
+                                    <span>Hanya menggunakan rem depan</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <p class="font-medium mb-4">3. Apa yang harus dihindari saat melakukan pengereman?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="q3" value="a" class="mr-2">
+                                    <span>Menjaga jarak aman</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q3" value="b" class="mr-2">
+                                    <span>Memperhatikan kondisi jalan</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="q3" value="c" class="mr-2">
+                                    <span>Mengerem mendadak saat menikung</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Submit Jawaban
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-6">
+                <button id="prevBtn" onclick="navigate('prev')" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700">
+                    <i class="fas fa-arrow-left mr-2"></i>Sebelumnya
+                </button>
+                <button id="nextBtn" onclick="navigate('next')" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                    Selanjutnya<i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentSection = 'cara';
+        const sections = ['cara', 'langkah', 'quiz'];
+        
+        function updateProgress() {
+            const currentIndex = sections.indexOf(currentSection);
+            const progress = (currentIndex / (sections.length - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected section
+            if (section === 'quiz') {
+                document.getElementById('quiz').classList.remove('hidden');
+            } else {
+                document.getElementById(section).classList.add('active');
+                document.getElementById('quiz').classList.add('hidden');
+            }
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-blue-600', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            currentSection = section;
+            updateProgress();
+            updateNavButtons();
+        }
+
+        function navigate(direction) {
+            const currentIndex = sections.indexOf(currentSection);
+            let nextIndex;
+            
+            if (direction === 'next') {
+                nextIndex = currentIndex + 1;
+            } else {
+                nextIndex = currentIndex - 1;
+            }
+            
+            if (nextIndex >= 0 && nextIndex < sections.length) {
+                showSection(sections[nextIndex]);
+            }
+        }
+
+        function updateNavButtons() {
+            const currentIndex = sections.indexOf(currentSection);
+            document.getElementById('prevBtn').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+            document.getElementById('nextBtn').style.visibility = currentIndex === sections.length - 1 ? 'hidden' : 'visible';
+        }
+
+        // Quiz handling
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const answers = {
+                q1: 'b', // Pengereman dengan memanfaatkan penurunan gigi transmisi
+                q2: 'b', // Rem belakang, lalu rem depan
+                q3: 'c'  // Mengerem mendadak saat menikung
+            };
+            
+            let score = 0;
+            let total = Object.keys(answers).length;
+            
+            for (let question in answers) {
+                const selected = document.querySelector(`input[name="${question}"]:checked`);
+                if (selected && selected.value === answers[question]) {
+                    score++;
+                }
+            }
+            
+            const percentage = (score / total) * 100;
+            
+            // Save progress
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                currentUser.progress.modules.braking = {
+                    completed: true,
+                    score: percentage
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Update users array
+                const users = JSON.parse(localStorage.getItem('users'));
+                const userIndex = users.findIndex(u => u.npk === currentUser.npk);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+            }
+            
+            // Show result
+            alert(`Nilai Anda: ${percentage}%\nModul telah selesai!`);
+            window.location.href = 'dashboard.html';
+        });
+
+        // Initialize
+        showSection('cara');
+    </script>
+
+    <script src="auth.js"></script>
+</body>
+</html>
