@@ -101,15 +101,21 @@
     </div>
 
     <script>
-        function loadAnalytics() {
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const analytics = calculateAnalytics(users);
-            
-            createDepartmentAccessChart(analytics.departmentAccess);
-            createDepartmentPerformanceChart(analytics.departmentPerformance);
-            createQuizScoreChart(analytics.moduleScores);
-            createModuleCompletionChart(analytics.moduleCompletion);
-            populateStatisticsTable(analytics);
+        async function loadAnalytics() {
+            try {
+                const users = await getAllUsers();
+                const userData = users.map(u => u.data);
+                const analytics = calculateAnalytics(userData);
+                
+                createDepartmentAccessChart(analytics.departmentAccess);
+                createDepartmentPerformanceChart(analytics.departmentPerformance);
+                createQuizScoreChart(analytics.moduleScores);
+                createModuleCompletionChart(analytics.moduleCompletion);
+                populateStatisticsTable(analytics);
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showErrorModal('Terjadi kesalahan saat memuat data analitik. Silakan refresh halaman.');
+            }
         }
 
         function calculateAnalytics(users) {
@@ -307,37 +313,43 @@
             });
         }
 
-        function exportToExcel() {
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            let csvContent = "data:text/csv;charset=utf-8,";
+        async function exportToExcel() {
+            try {
+                const users = await getAllUsers();
+                const userData = users.map(u => u.data);
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Add headers
+                csvContent += "NPK,Nama,Bagian,Basic Score,Braking Score,Hazard Score,Microsleep Score,Blindspot Score,Commitment\n";
+                
+                // Add data rows
+                userData.forEach(user => {
+                    const row = [
+                        user.npk,
+                        user.nama,
+                        user.bagian,
+                        user.progress.modules.basic.score || 0,
+                        user.progress.modules.braking.score || 0,
+                        user.progress.modules.hazard.score || 0,
+                        user.progress.modules.microsleep.score || 0,
+                        user.progress.modules.blindspot.score || 0,
+                        `"${user.progress.commitment || ''}"`
+                    ];
+                    csvContent += row.join(",") + "\n";
+                });
             
-            // Add headers
-            csvContent += "NPK,Nama,Bagian,Basic Score,Braking Score,Hazard Score,Microsleep Score,Blindspot Score,Commitment\n";
-            
-            // Add data rows
-            users.forEach(user => {
-                const row = [
-                    user.npk,
-                    user.nama,
-                    user.bagian,
-                    user.progress.modules.basic.score || 0,
-                    user.progress.modules.braking.score || 0,
-                    user.progress.modules.hazard.score || 0,
-                    user.progress.modules.microsleep.score || 0,
-                    user.progress.modules.blindspot.score || 0,
-                    `"${user.progress.commitment || ''}"`
-                ];
-                csvContent += row.join(",") + "\n";
-            });
-            
-            // Create download link
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "safety_riding_statistics.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "safety_riding_statistics.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                showErrorModal('Terjadi kesalahan saat mengekspor data. Silakan coba lagi.');
+            }
         }
     </script>
 
