@@ -1,14 +1,37 @@
-// Initialize user data in localStorage if it doesn't exist
-if (!localStorage.getItem('users')) {
-    localStorage.setItem('users', JSON.stringify([]));
-}
-
+// Initialize analytics in localStorage
 if (!localStorage.getItem('analytics')) {
     localStorage.setItem('analytics', JSON.stringify({
         departmentAccess: {},
         quizScores: {},
         moduleCompletions: {}
     }));
+}
+
+// Function to save user data to Netlify Function
+async function saveUserToDatabase(userData) {
+    try {
+        const response = await fetch('/.netlify/functions/saveUser', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error saving user:', error);
+        throw error;
+    }
+}
+
+// Function to get all users from database
+async function getAllUsers() {
+    try {
+        const response = await fetch('/.netlify/functions/getUsers');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error getting users:', error);
+        throw error;
+    }
 }
 
 // Function to show error modal
@@ -63,7 +86,7 @@ function initializeUserProgress() {
 }
 
 // Handle form submission
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const npk = document.getElementById('npk').value;
@@ -74,37 +97,38 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         return;
     }
 
-    // Get existing users
-    const users = JSON.parse(localStorage.getItem('users'));
-    
-    // Check if user exists
-    let user = users.find(u => u.npk === npk);
-    
-    if (!user) {
-        // Create new user
-        user = {
+    try {
+        // Get all users from database
+        const users = await getAllUsers();
+        
+        // Check if user exists
+        let user = users.find(u => u.data.npk === npk);
+        
+        let userData = {
             npk,
             nama,
             bagian,
-            progress: initializeUserProgress()
+            progress: user ? user.data.progress : initializeUserProgress()
         };
-        users.push(user);
-    }
 
-    // Update last access time
-    user.progress.lastAccess = new Date().toISOString();
-    
-    // Save updated users array
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    // Update analytics
-    updateAnalytics(bagian);
-    
-    // Save current user
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    
-    // Redirect to dashboard
-    window.location.href = 'dashboard.html';
+        // Update last access time
+        userData.progress.lastAccess = new Date().toISOString();
+        
+        // Save/update user in database
+        await saveUserToDatabase(userData);
+        
+        // Update analytics
+        updateAnalytics(bagian);
+        
+        // Save current user in localStorage for session
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        showErrorModal('Terjadi kesalahan saat login. Silakan coba lagi.');
+        console.error('Login error:', error);
+    }
 });
 
 // Function to check if user is logged in
@@ -137,9 +161,15 @@ function logout(isCommitmentSubmitted = false) {
             }
         }
 
-        // Clear user session and redirect to login
-        localStorage.removeItem('currentUser');
-        window.location.href = 'index.html';
+        // Save final progress to database before logout
+        saveUserToDatabase(currentUser).then(() => {
+            // Clear user session and redirect to login
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }).catch(error => {
+            console.error('Error saving final progress:', error);
+            showErrorModal('Terjadi kesalahan saat menyimpan progress. Silakan coba lagi.');
+        });
         return true;
     }
     
@@ -148,15 +178,8 @@ function logout(isCommitmentSubmitted = false) {
     return true;
 }
 
-// Function to force logout (for use in quiz completions and other forced exits)
-function forceLogout() {
-    localStorage.removeItem('currentUser');
-    window.location.replace('index.html');
-}
-
 // Export functions for use in other files
 window.checkAuth = checkAuth;
 window.logout = logout;
-window.forceLogout = forceLogout;
 window.showErrorModal = showErrorModal;
 window.closeErrorModal = closeErrorModal;
