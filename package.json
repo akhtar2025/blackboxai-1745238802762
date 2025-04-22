@@ -1,0 +1,15 @@
+{
+  "name": "safety-riding-elearning",
+  "version": "1.0.0",
+  "description": "E-Learning Safety Riding Application",
+  "dependencies": {
+    "faunadb": "^4.8.0"
+  },
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "netlify build"
+  },
+  "devDependencies": {
+    "netlify-cli": "^12.0.0"
+  }
+}
