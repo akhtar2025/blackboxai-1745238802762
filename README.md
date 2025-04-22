@@ -6,15 +6,20 @@ Aplikasi pembelajaran online untuk keselamatan berkendara sepeda motor dengan fi
 ## Struktur Aplikasi
 
 ```
-├── index.html          # Halaman login
-├── dashboard.html      # Dashboard utama
-├── auth.js            # Manajemen autentikasi
-├── basic.html         # Materi dasar safety riding
-├── braking.html       # Materi teknik pengereman
-├── hazard.html        # Materi antisipasi bahaya
-├── microsleep.html    # Materi micro sleep
-├── blindspot.html     # Materi blind spot
-└── analytics.html     # Halaman statistik
+├── functions/              # Netlify Functions
+│   ├── saveUser.js        # Fungsi untuk menyimpan data user
+│   └── getUsers.js        # Fungsi untuk mengambil data user
+├── index.html             # Halaman login
+├── dashboard.html         # Dashboard utama
+├── auth.js               # Manajemen autentikasi & database
+├── basic.html            # Materi dasar safety riding
+├── braking.html          # Materi teknik pengereman
+├── hazard.html           # Materi antisipasi bahaya
+├── microsleep.html       # Materi micro sleep
+├── blindspot.html        # Materi blind spot
+├── analytics.html        # Halaman statistik
+├── netlify.toml          # Konfigurasi Netlify
+└── package.json          # Dependencies project
 ```
 
 ## Fitur Aplikasi
@@ -314,9 +319,9 @@ Aplikasi pembelajaran online untuk keselamatan berkendara sepeda motor dengan fi
 
 ## Penyimpanan Data
 
-Aplikasi ini menggunakan localStorage untuk menyimpan data pengguna. Data yang tersimpan meliputi:
+Aplikasi ini menggunakan FaunaDB untuk menyimpan data pengguna secara permanen. Data yang tersimpan meliputi:
 
-1. **Data Pengguna**
+1. **Data Pengguna (Collection: users)**
    - NPK
    - Nama
    - Bagian/Departemen
@@ -324,10 +329,52 @@ Aplikasi ini menggunakan localStorage untuk menyimpan data pengguna. Data yang t
    - Nilai quiz
    - Komitmen keselamatan
 
-2. **Data Statistik**
-   - Akses per departemen
-   - Nilai rata-rata
-   - Status penyelesaian modul
+2. **Setup FaunaDB**
+   a. Buat Akun dan Database:
+      - Kunjungi [Fauna](https://fauna.com/)
+      - Klik "Register" dan buat akun baru
+      - Setelah login, klik "Create Database"
+      - Isi nama database (misal: "safety-riding")
+      - Pilih "Classic Region Group"
+      - Klik "Create"
+
+   b. Buat Collection:
+      - Di sidebar kiri, klik "Collections"
+      - Klik "New Collection"
+      - Isi nama collection: "users"
+      - Klik "Create"
+
+   c. Dapatkan API Key:
+      - Di sidebar kiri, klik "Security"
+      - Klik "New Key"
+      - Pilih database yang baru dibuat
+      - Role: Admin
+      - Klik "Create Key"
+      - PENTING: Copy dan simpan Secret Key yang muncul
+
+3. **Konfigurasi di Netlify**
+   a. Setup Environment Variable:
+      - Di dashboard site Netlify
+      - Klik "Site settings"
+      - Klik "Environment variables"
+      - Tambah variable:
+        * Key: FAUNA_SECRET_KEY
+        * Value: [Paste Secret Key dari FaunaDB]
+      - Klik "Save"
+
+   b. Redeploy Site:
+      - Klik "Deploys"
+      - Klik "Trigger deploy"
+      - Pilih "Deploy site"
+
+4. **Verifikasi Data**
+   - Login sebagai user baru
+   - Cek di FaunaDB Dashboard:
+     * Collections > users
+     * Data user baru harus muncul
+   - Cek di Analytics page:
+     * Data harus terupdate
+     * Export Excel harus berisi data terbaru
 
 ## Pemeliharaan
 
@@ -377,6 +424,54 @@ Aplikasi ini menggunakan localStorage untuk menyimpan data pengguna. Data yang t
    - Enkripsi data sensitif
    - Validasi input
    - Rate limiting
+
+## Cara Mengedit/Update Konten
+
+1. **Edit File Lokal**
+   - Buka file yang ingin diedit di komputer Anda (misalnya dengan Visual Studio Code)
+   - Lakukan perubahan yang diinginkan
+   - Simpan file
+
+2. **Upload Ulang ke Netlify**
+   a. Cara Manual (Paling Mudah):
+      - Login ke [Netlify](https://app.netlify.com/)
+      - Pilih site Anda
+      - Klik tab "Deploys"
+      - Drag & drop folder project yang sudah diupdate
+      - Tunggu proses deploy selesai (1-2 menit)
+
+   b. Cara Via Terminal (Untuk Developer):
+      ```bash
+      # 1. Masuk ke folder project
+      cd path/ke/folder/safety-riding
+
+      # 2. Tambahkan file yang diubah
+      git add .
+
+      # 3. Buat commit baru
+      git commit -m "Update konten tanggal DD-MM-YYYY"
+
+      # 4. Push ke GitHub (jika menggunakan GitHub)
+      git push origin main
+      ```
+
+3. **Verifikasi Update**
+   - Buka website Anda
+   - Refresh halaman (tekan Ctrl+F5 atau Cmd+Shift+R)
+   - Cek perubahan yang telah dilakukan
+   - Test semua fitur yang terkait perubahan
+
+4. **Rollback Jika Ada Masalah**
+   - Di Netlify, klik tab "Deploys"
+   - Cari versi sebelumnya yang bekerja dengan baik
+   - Klik "Publish deploy" untuk kembali ke versi tersebut
+
+TIPS:
+- Selalu backup file sebelum melakukan perubahan
+- Test perubahan di komputer lokal sebelum upload
+- Simpan copy dari semua file asli
+- Catat setiap perubahan yang dilakukan
+- Gunakan nama commit yang jelas (misal: "Update materi basic riding 20-12-2023")
 
 ## Support
 
